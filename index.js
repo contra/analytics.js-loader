@@ -1,19 +1,13 @@
 module.exports = load;
 
+var analytics = [];
+
 function load(opts) {
-  // Create a queue, but don't obliterate an existing one!
-  var analytics = global.analytics = global.analytics || [];
-
   // If the real analytics.js is already on the page return.
-  if (analytics.initialize) return;
+  if (analytics.initialize) return analytics;
 
-  // If the snippet was invoked already show an error.
-  if (analytics.invoked) {
-    if (window.console && console.error) {
-      console.error('Segment snippet included twice.');
-    }
-    return;
-  }
+  // If the snippet was invoked already.
+  if (analytics.invoked) return analytics;
 
   // Invoked flag, to make sure the snippet
   // is never invoked twice.
@@ -63,9 +57,7 @@ function load(opts) {
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.async = true;
-    script.src = ('https:' === document.location.protocol
-      ? 'https://' : 'http://')
-      + 'cdn.segment.com/analytics.js/v1/'
+    script.src = 'https://cdn.segment.com/analytics.js/v1/'
       + key + '/analytics.min.js';
 
     // Insert our script next to the first script element.
@@ -86,4 +78,6 @@ function load(opts) {
   if (!opts.skipPageCall) {
     analytics.page();
   }
+
+  return analytics;
 }
