@@ -4,15 +4,10 @@ module.exports = function(pageKey){
   var analytics = window.analytics = window.analytics || [];
 
   // If the real analytics.js is already on the page return.
-  if (analytics.initialize) return;
+  if (analytics.initialize) return analytics;
 
   // If the snippet was invoked already show an error.
-  if (analytics.invoked) {
-    if (window.console && console.error) {
-      console.error('Segment snippet included twice.');
-    }
-    return;
-  }
+  if (analytics.invoked) return analytics;
 
   // Invoked flag, to make sure the snippet
   // is never invoked twice.
