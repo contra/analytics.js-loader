@@ -1,13 +1,18 @@
-module.exports = load;
+module.exports = function(pageKey){
 
-var analytics = [];
+  // Create a queue, but don't obliterate an existing one!
+  var analytics = window.analytics = window.analytics || [];
 
-function load(opts) {
   // If the real analytics.js is already on the page return.
-  if (analytics.initialize) return analytics;
+  if (analytics.initialize) return;
 
-  // If the snippet was invoked already.
-  if (analytics.invoked) return analytics;
+  // If the snippet was invoked already show an error.
+  if (analytics.invoked) {
+    if (window.console && console.error) {
+      console.error('Segment snippet included twice.');
+    }
+    return;
+  }
 
   // Invoked flag, to make sure the snippet
   // is never invoked twice.
@@ -21,6 +26,7 @@ function load(opts) {
     'trackForm',
     'pageview',
     'identify',
+    'reset',
     'group',
     'track',
     'ready',
@@ -66,18 +72,16 @@ function load(opts) {
   };
 
   // Add a version to keep track of what's in the wild.
-  analytics.SNIPPET_VERSION = '3.0.1';
+  analytics.SNIPPET_VERSION = '3.1.0';
 
   // Load Analytics.js with your key, which will automatically
   // load the tools you've enabled for your account. Boosh!
-  analytics.load(opts.writeKey);
+  analytics.load(pageKey);
 
   // Make the first page call to load the integrations. If
   // you'd like to manually name or tag the page, edit or
   // move this call however you'd like.
-  if (!opts.skipPageCall) {
-    analytics.page();
-  }
+  analytics.page();
 
   return analytics;
-}
+};
